@@ -1,29 +1,34 @@
-import { createMiddleware }                      from "hono/factory";
-import { HTTPException }                         from "hono/http-exception";
-import jwt, { type JwtPayload }                  from "jsonwebtoken";
-import { prisma }                                from "../utils/prisma.js";
+import { createMiddleware } from "hono/factory";
+import { HTTPException } from "hono/http-exception";
+import jwt, { type JwtPayload } from "jsonwebtoken";
+import { prisma } from "../utils/prisma.js";
 
-export const authMiddleware =  createMiddleware(async (c, next) => {
-    const token = c.req.header("token");
-    if(!token){
-        throw new HTTPException(401, { message: "Unauthorized" });
-    }
+export const authMiddleware = createMiddleware(async (c, next) => {
+	const token = c.req.header("token");
+	if (!token) {
+		throw new HTTPException(401, { message: "Unauthorized" });
+	}
 
-    try{
-        const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+	try {
+		const jwtSecret = process.env.JWT_SECRET;
+		if (!jwtSecret) {
+			throw new HTTPException(500, { message: "JWT_SECRET not set" });
+		}
 
-        const user = await prisma.users.findUnique({
-            where: { id: payload.sub },
-            select: { id: true, email: true }
-        });
-        if(!user){
-            throw new HTTPException(401, { message: "User not found" });
-        }
+		const payload = jwt.verify(token, jwtSecret) as JwtPayload;
 
-        c.set("user", user);
+		const user = await prisma.users.findUnique({
+			where: { id: payload.sub },
+			select: { id: true, email: true },
+		});
+		if (!user) {
+			throw new HTTPException(401, { message: "User not found" });
+		}
 
-        await next();
-    }catch(err){
-        throw new HTTPException(401, { message: "Invalid token" });
-    }
-})
+		c.set("user", user);
+
+		await next();
+	} catch (_err) {
+		throw new HTTPException(401, { message: "Invalid token" });
+	}
+});
