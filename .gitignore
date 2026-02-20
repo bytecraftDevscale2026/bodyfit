@@ -37,3 +37,6 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
+
+# prisma
+generated

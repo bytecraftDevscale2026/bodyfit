@@ -6,10 +6,11 @@
 		"#/*": "./src/*"
 	},
 	"scripts": {
-		"dev": "vite dev --port 3000",
+		"dev": "pnpm with-env vite dev --port 3000",
 		"build": "vite build",
 		"preview": "vite preview",
-		"test": "vitest run"
+		"test": "vitest run",
+		"with-env": "dotenv -e ../../.env --"
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.1.18",

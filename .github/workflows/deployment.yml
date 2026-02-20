@@ -1,0 +1,57 @@
+name: "CI/CD"
+
+on:
+  pull_request:
+    branches: 
+      - main
+  push:
+    branches: 
+      - main
+
+jobs:
+  pr-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate Prisma client
+        run: pnpm --filter=api db:generate
+
+      - name: Run lint
+        run: pnpm lint
+
+      - name: Run build
+        run: pnpm build
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate Prisma client
+        run: pnpm --filter=api db:generate
+
+      - name: Run lint
+        run: pnpm lint
+
+      - name: Run build
+        run: pnpm build
+
+      - name: Deploy to server
+        run: echo "Deploying to server [MOCK]" # Replace with actual deployment commands
