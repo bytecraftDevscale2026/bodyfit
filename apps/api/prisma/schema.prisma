@@ -12,3 +12,52 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Users {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profiles?
+  weightLogs WeightLogs[]
+  waterLogs WaterLogs[]
+}
+
+model Profiles {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  gender          String?
+  dateOfBirth     DateTime?
+  heightCm        Decimal?
+  activityLevel   String?
+  dietGoal        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user Users @relation(fields: [userId], references: [id])
+}
+
+model WeightLogs {
+  id        String   @id @default(uuid())
+  userId    String
+  weightKg  Decimal
+  loggedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user Users @relation(fields: [userId], references: [id])
+}
+
+model WaterLogs {
+  id        String   @id @default(uuid())
+  userId    String
+  amountL   Decimal
+  loggedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user Users @relation(fields: [userId], references: [id])
+}
