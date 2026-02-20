@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
+		"prepare": "husky",
 		"api:dev": "pnpm run --filter=api dev",
 		"platform:dev": "pnpm run --filter=platform dev",
 		"dev": "pnpm --parallel --filter=api --filter=platform run dev",
