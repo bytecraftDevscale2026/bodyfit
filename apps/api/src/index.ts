@@ -1,11 +1,10 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
+import { authRoute } from "./modules/auth/route.js";
 
-const app = new Hono();
-
-app.get("/", (c) => {
-	return c.text("Hello Hono!");
-});
+const app = new Hono()
+	.get("/health", (c) => c.text("ok"))
+	.route("/auth", authRoute);
 
 serve(
 	{
