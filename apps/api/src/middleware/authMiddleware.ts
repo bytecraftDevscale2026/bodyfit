@@ -19,7 +19,7 @@ export const authMiddleware = createMiddleware(async (c, next) => {
 
 		const user = await prisma.users.findUnique({
 			where: { id: payload.sub },
-			select: { id: true, email: true },
+			select: { id: true, email: true, name: true },
 		});
 		if (!user) {
 			throw new HTTPException(401, { message: "User not found" });

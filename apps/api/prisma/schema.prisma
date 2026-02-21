@@ -29,11 +29,11 @@ model Users {
 model Profiles {
   id              String   @id @default(uuid())
   userId          String   @unique
-  gender          String?
+  gender          String? // male, female
   dateOfBirth     DateTime?
   heightCm        Decimal?
-  activityLevel   String?
-  dietGoal        String?
+  activityLevel   String? // sedentary, light, moderate, active
+  dietGoal        String? // fat_loss, maintenance, muscle_gain
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

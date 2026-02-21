@@ -24,8 +24,20 @@ export const authRoute = new Hono()
 				password: hashedPassword,
 			},
 		});
+		// Create an empty profile for the new user
+		await prisma.profiles.create({
+			data: {
+				userId: newUser.id,
+			},
+		});
 
-		return c.json({ message: "Register success", data: newUser });
+		// show user with profile
+		const userWithProfile = await prisma.users.findUnique({
+			where: { id: newUser.id },
+			include: { profile: true },
+		});
+
+		return c.json({ message: "Register success", data: userWithProfile });
 	})
 	.post("/login", zValidator("json", loginSchema), async (c) => {
 		const body = c.req.valid("json");
@@ -49,9 +61,12 @@ export const authRoute = new Hono()
 		if (!jwtSecret) {
 			throw new HTTPException(500, { message: "JWT_SECRET not set" });
 		}
-
 		const token = jwt.sign(
-			{ sub: existingUser.id, email: existingUser.email },
+			{
+				sub: existingUser.id,
+				email: existingUser.email,
+				name: existingUser.name,
+			},
 			jwtSecret,
 		);
 
